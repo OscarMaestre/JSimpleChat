@@ -1,6 +1,7 @@
 
 package io.github.oscarmaestre.jsimplechat;
 
+import io.github.oscarmaestre.jutilidades.Utilidades;
 import java.io.BufferedReader;
 import java.io.Console;
 import java.io.IOException;

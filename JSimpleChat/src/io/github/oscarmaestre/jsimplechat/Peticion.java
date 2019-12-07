@@ -1,6 +1,7 @@
 
 package io.github.oscarmaestre.jsimplechat;
 
+import io.github.oscarmaestre.jutilidades.Utilidades;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,10 +9,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Peticion implements Runnable{
@@ -87,6 +84,9 @@ public class Peticion implements Runnable{
                 mensajeRecibido.getTipoMensaje();
         if (tipoMensaje ==  Mensaje.TipoMensaje.MENSAJE_ERRONEO){
             this.mostrarErrorMensaje(mensajeRecibido.getCadenaCompletaRecibida());
+            String mensajeError="ERROR: Has enviado el siguiente mensaje"
+                    + " con estructura errónea:"+mensajeRecibido.getCadenaCompletaRecibida();
+            Utilidades.enviarMensaje(pw, mensajeError);
             return false; /*El mensaje NO SE HA ENVIADO*/
         }/*Fin del if para mensajes erroneos*/        
         

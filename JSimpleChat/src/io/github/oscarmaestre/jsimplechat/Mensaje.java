@@ -1,6 +1,11 @@
 package io.github.oscarmaestre.jsimplechat;
 
+import java.util.Random;
+
 public class Mensaje {
+
+    
+
     public enum TipoMensaje{
         ESTABLECIMIENTO_NICK, MENSAJE_PUBLICO, 
         MENSAJE_PRIVADO, MENSAJE_ERRONEO
@@ -9,27 +14,30 @@ public class Mensaje {
     private final String PUBLICO    =   "PUBL";
     private final String PRIVADO    =   "PRIV";
     
-    private TipoMensaje tipoMensaje;
-    private String      destinatarioMensaje;
-    private String      textoMensaje;
-    private String      nickEstablecido;
+    private TipoMensaje         tipoMensaje;
+    private String              destinatarioMensaje;
+    private String              textoMensaje;
+    private String              nickEstablecido;
     
-    private final String      cadenaCompletaRecibida;
+    private final String        cadenaCompletaRecibida;
     
     
     /* Se asume que todo mensaje tiene la misma estructura
        /NICK pepito ----->Para cambiar el nick
        /PUBL Hola gente-->Para enviar un mensaje a todo el mundo
        /PRIV pepito ¿Qué tal?-->Para enviar un mensaje privado a alguien
+    
+     Cualquier desviación de este protocolo se asume como un error
     */
     public Mensaje(String cadenaRecibida){
         this.cadenaCompletaRecibida=cadenaRecibida;
         /*Primero miramos el primer caracter*/
-        if (cadenaRecibida.charAt(0)!='/'){
-            /* Si no es un / es que hay un error*/
+        if (esMensajeConEstructuraErronea(cadenaRecibida)){
             this.tipoMensaje=TipoMensaje.MENSAJE_ERRONEO;
             return;
         }
+        
+        
         /*Ahora examinamos los caracteres 1-4 para ver si es
         un NICK un PUBL o un PRIV*/
         String tipoMensajeRecibido=cadenaRecibida.substring(1,5);
@@ -67,6 +75,13 @@ public class Mensaje {
     }
     
     private String getRestoMensaje(String cadenaRecibida){
+        /*En este punto no sabemos si despues aparece un nick o no, así
+        que primero lo comprobamos*/
+        if (cadenaRecibida.length()<6){
+            /*En este punto el usuario ha enviado un mensaje correcto
+            pero no ha enviado un nick, así que inventamos uno */
+            return this.inventarNick();
+        }
         return cadenaRecibida.substring(6, cadenaRecibida.length());
     }
     
@@ -86,6 +101,37 @@ public class Mensaje {
                         cadenaRecibida.length());
     }
     
+    private boolean esMensajeConEstructuraErronea(String cadenaRecibida) {
+        final boolean MENSAJE_ES_ERRONEO=true;
+        final boolean MENSAJE_PARECE_CORRECTO=false;
+        /*Si no empieza por / el mensaje sí es erroneo*/
+        if (cadenaRecibida.charAt(0)!='/'){
+            return MENSAJE_ES_ERRONEO; 
+        }
+    
+        /*Dado nuestro protocolo, cualquier mensaje 
+        debe tener como mínimo 6 caracteres*/
+        if (cadenaRecibida.length()<6){
+            return MENSAJE_ES_ERRONEO;
+        }
+        
+        /* El simbolo 5 DEBE SER SIEMPRE un espacio*/
+        if (cadenaRecibida.charAt(5)!=' '){
+            return MENSAJE_ES_ERRONEO;
+        }
+        
+        /*Si llegamos aquí parece estar todo bien*/
+        return MENSAJE_PARECE_CORRECTO;
+    }
+
+
+
+    private String inventarNick() {
+        String prefijo="Usuario";
+        Random r=new Random();
+        int numAzar = 50+r.nextInt(100);
+        return prefijo+numAzar;
+    }
     /*Getters*/
 
     public TipoMensaje getTipoMensaje() {

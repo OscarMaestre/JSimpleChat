@@ -1,6 +1,11 @@
 # JSimpleChat
 Un chat muy sencillo implementado en Java
 
+
+## Dependencias
+
+Este proyecto depende del proyecto **[JUtilidades](http://github.com)**. Descargalo y si usas NetBeans indica que usarás dicho proyecto para hacer la compilación (en el menú "Propiedades del proyecto" busca "Libraries")
+
 ## Arquitectura
 
 Existen dos partes bien diferenciadas: cliente y servidor. Para comunicarse, ambos elementos usan un protocolo muy sencillo:
@@ -43,5 +48,5 @@ El orden recomendado es:
 
 ## Clases compartidas
 
-1. ``Utilidades.java`` Contiene clases de utilidad para gestionar flujos de entrada/salida.
+1. ``Utilidades.java`` Contiene clases de utilidad para gestionar flujos de entrada/salida. Está en el proyecto **[JUtilidades](http://github.com)**
 2. ``Constantes.java`` Empaqueta solo el puerto usado por cliente y servidor
