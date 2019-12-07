@@ -14,9 +14,12 @@ import java.util.Scanner;
 public class Cliente {
 
     
-    final int    puerto    =Constantes.PUERTO_SERVICIO;
+    private final int    puerto                 =Constantes.PUERTO_SERVICIO;
+    /* Si en 30 segundos no se lee nada,todo se cierra*/
+    private final int MAXIMOS_MSG_SIN_ACTIVIDAD = 30000;
     public void chatear(String ipServidor) throws IOException, InterruptedException{
         Socket conexion;
+        
         InetSocketAddress direccionServidor;
         direccionServidor=
            new InetSocketAddress(ipServidor, puerto);
@@ -35,13 +38,31 @@ public class Cliente {
         Thread hiloEscritorMensajes=new Thread(emr);
         hiloEscritorMensajes.start();
         
+        conexion.setSoTimeout(MAXIMOS_MSG_SIN_ACTIVIDAD);
+        
         Scanner scanner = new Scanner(System.in);
         String linea=scanner.nextLine();
-        while (!linea.equals("/fin")){
+        
+        while (!linea.equals("/FIN!") && (!conexion.isClosed()) ){
             pw.println(linea);
             pw.flush();
             linea=scanner.nextLine();
+            if ( conexion.isClosed()  || (bfr==null) ){
+                System.out.println("La conexion se ha cerrado por parte del servidor");
+                break;
+            }
+            
         }
+        /*Si llegamos aquí hay que cerrar todo*/
+        /*Primero nos aseguramos de enviar el aviso al servidor*/
+        pw.println("/FIN!");
+        
+        /*Y cerramos*/
+        pw.flush();
+        pw.close();
+        conexion.close();
+        bfr.close();
+        pw.close();
     }
     
     

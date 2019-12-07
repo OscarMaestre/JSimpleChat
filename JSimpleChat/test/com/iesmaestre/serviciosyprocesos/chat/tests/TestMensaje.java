@@ -41,9 +41,17 @@ public class TestMensaje {
         /*Construimos un mensaje claramente incorrecto, en el que falta
         el nick  */
         Mensaje m=new Mensaje(tipo);
-        
-        Assert.assertEquals(Mensaje.TipoMensaje.MENSAJE_ERRONEO, 
-                m.getTipoMensaje());
+        boolean erroneo = m.isErroneo();
+        Assert.assertEquals(true, erroneo);
+    }
+    
+    @Test
+    public void testMensajeNickConSoloUnEspacio(){
+        String tipo="/NICK";
+        /* Esto no es un error*/
+        Mensaje m=new Mensaje(tipo+" ");
+        boolean erroneo = m.isErroneo();
+        Assert.assertEquals(false, erroneo);
     }
     
     
@@ -63,8 +71,19 @@ public class TestMensaje {
         String tipo="/PUBL";
         /*Construimos un mensaje claramente erróneo, no hay texto*/
         Mensaje m=new Mensaje(tipo);
-        Assert.assertEquals(Mensaje.TipoMensaje.MENSAJE_ERRONEO,
-                m.getTipoMensaje());
+        boolean erroneo = m.isErroneo();
+        Assert.assertEquals(true,erroneo);
+        System.out.println("Mensaje:"+m.getTextoMensaje());
+        
+    }
+    
+    @Test
+    public void testMensajePublicoErroneoConUnEspacio(){
+        String tipo="/PUBL ";
+        /*Se puede enviar un publ con solo un espacio*/
+        Mensaje m=new Mensaje(tipo);
+        boolean erroneo = m.isErroneo();
+        Assert.assertEquals(false,erroneo);
         System.out.println("Mensaje:"+m.getTextoMensaje());
         
     }
@@ -77,9 +96,35 @@ public class TestMensaje {
         Mensaje m=new Mensaje(tipo+" "+nickDestinatario+" "+textoMensaje);
         Assert.assertEquals(Mensaje.TipoMensaje.MENSAJE_PRIVADO,
                 m.getTipoMensaje());
-        
+        String destinatarioMensaje = m.getDestinatarioMensaje();
+        Assert.assertEquals(nickDestinatario, destinatarioMensaje);
         Assert.assertEquals(textoMensaje, m.getTextoMensaje());
         
+    }
+    
+    
+    
+    @Test
+    public void testMensajePrivadoConEspacio(){
+        System.out.println("Privado con espacio");
+        String tipo="/PRIV";
+        String nickDestinatario="pepito";
+        String textoMensaje="";
+        Mensaje m=new Mensaje(tipo+" "+nickDestinatario+" "+textoMensaje);
+        Assert.assertEquals(Mensaje.TipoMensaje.MENSAJE_PRIVADO,
+                m.getTipoMensaje());
+        boolean erroneo = m.isErroneo();
+        Assert.assertEquals(true, erroneo);
+        
+    }
+    
+    @Test
+    public void testFin(){
+        String tipo="/FIN! ";
+        
+        Mensaje m=new Mensaje(tipo);
+        Assert.assertEquals(Mensaje.TipoMensaje.MENSAJE_FIN_CONEXION,
+                m.getTipoMensaje());        
     }
     
     

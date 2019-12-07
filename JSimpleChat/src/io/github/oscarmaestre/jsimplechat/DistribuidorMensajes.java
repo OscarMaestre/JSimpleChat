@@ -32,7 +32,11 @@ public class DistribuidorMensajes {
     }
     
     public ClienteConectado getCliente(String nick){
-        System.out.println("Buscando a "+nick);
+        if (nick==null) {
+            System.out.println("Se ha preguntado por el nick null, "
+                    + "pero logicamente no existe. Posible error");
+            return null;
+        }
         for (ClienteConectado c:this.direcciones){
             System.out.println("Revisando nick:"+c.getNick());
             if (nick.equals(c.getNick())){
